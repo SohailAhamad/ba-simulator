@@ -1,8 +1,8 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>BA Simulator — Semiconductor Memory Manufacturing</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -22,10 +22,10 @@
       </div>
     </div>
     <div class="header-stats">
-      <div class="stat-pill">Tasks: <span class="num" id="stat-total">0</span> total</div>
-      <div class="stat-pill">Completed: <span class="num" id="stat-done">0</span></div>
-      <div class="stat-pill">In Progress: <span class="num" id="stat-prog">0</span></div>
-      <div class="stat-pill">Domain Know: <span class="num" id="stat-check">0/13</span></div>
+      <div class="stat-pill">Tasks: <span class="num" id="stat-total">0</span></div>
+      <div class="stat-pill">Done: <span class="num" id="stat-completed">0</span></div>
+      <div class="stat-pill">In Progress: <span class="num" id="stat-progress">0</span></div>
+      <div class="stat-pill">Knowledge: <span class="num" id="stat-knowledge">0/13</span></div>
     </div>
   </div>
 </header>
@@ -33,204 +33,93 @@
 <!-- MAIN NAV -->
 <nav style="background:var(--bg-card);border-bottom:1px solid var(--border);">
   <div class="nav-tabs">
-    <button class="nav-tab active" data-tab="tasks" onclick="switchTab('tasks')">&#128203; Task Library</button>
-    <button class="nav-tab" data-tab="scenarios" onclick="switchTab('scenarios')">&#127914; Practice Scenarios</button>
-    <button class="nav-tab" data-tab="checklist" onclick="switchTab('checklist')">&#9989; Domain Knowledge</button>
-    <button class="nav-tab" data-tab="kpis" onclick="switchTab('kpis')">&#128200; KPI Reference</button>
-    <button class="nav-tab" data-tab="routines" onclick="switchTab('routines')">&#128197; Daily Routines</button>
-    <button class="nav-tab" data-tab="tools" onclick="switchTab('tools')">&#128295; Tools & Systems</button>
+    <button class="nav-tab active" data-tab="tasks" onclick="switchTab('tasks')">📋 Task Library</button>
+    <button class="nav-tab" data-tab="scenarios" onclick="switchTab('scenarios')">🎭 Practice Scenarios</button>
+    <button class="nav-tab" data-tab="checklist" onclick="switchTab('checklist')">✅ Domain Knowledge</button>
+    <button class="nav-tab" data-tab="kpis" onclick="switchTab('kpis')">📊 KPI Reference</button>
+    <button class="nav-tab" data-tab="routines" onclick="switchTab('routines')">📅 Daily Routines</button>
+    <button class="nav-tab" data-tab="tools" onclick="switchTab('tools')">🔧 Tools & Systems</button>
   </div>
 </nav>
 
 <main class="main">
 
   <!-- TAB: TASKS -->
-  <div class="tab-content active" id="tab-tasks">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
-      <h2 style="color:var(--text-heading);">BA Task Library</h2>
+  <div class="tab-content active" id="tasks">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+      <h2 style="color:var(--text-heading);">📋 BA Task Library</h2>
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <label class="btn btn-outline" style="cursor:pointer;font-size:0.8rem;" title="Import saved progress">
-          &#8659; Import
+        <label class="btn btn-outline" style="cursor:pointer;font-size:0.78rem;">
+          ⬇ Import
           <input type="file" accept=".json" style="display:none;" onchange="importData(this)" />
         </label>
-        <button class="btn btn-outline" onclick="exportData()" style="font-size:0.8rem;">&#8679; Export Progress</button>
+        <button class="btn btn-outline" onclick="exportData()" style="font-size:0.78rem;">⬆ Export</button>
       </div>
     </div>
 
     <!-- Search -->
     <div class="search-wrap">
-      <span class="search-icon">&#128269;</span>
-      <input type="text" id="task-search" class="search-box" placeholder="Search tasks..." />
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search-input" class="search-box" placeholder="Search tasks..." />
     </div>
 
     <!-- Filter buttons -->
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
-      <button class="btn btn-outline filter-btn active" onclick="filterTasks('all')" style="font-size:0.78rem;padding:6px 14px;">All</button>
-      <button class="btn btn-outline filter-btn" onclick="filterTasks('ops')" style="font-size:0.78rem;padding:6px 14px;color:var(--accent);">Fab Ops</button>
-      <button class="btn btn-outline filter-btn" onclick="filterTasks('equip')" style="font-size:0.78rem;padding:6px 14px;color:var(--green);">Equipment</button>
-      <button class="btn btn-outline filter-btn" onclick="filterTasks('quality')" style="font-size:0.78rem;padding:6px 14px;color:var(--yellow);">Quality</button>
-      <button class="btn btn-outline filter-btn" onclick="filterTasks('supply')" style="font-size:0.78rem;padding:6px 14px;color:var(--purple);">Supply Chain</button>
-      <button class="btn btn-outline filter-btn" onclick="filterTasks('planning')" style="font-size:0.78rem;padding:6px 14px;color:var(--red);">Planning</button>
-      <button class="btn btn-outline filter-btn" onclick="filterTasks('mes')" style="font-size:0.78rem;padding:6px 14px;color:#2dd4bf;">MES/IT</button>
-      <button class="btn btn-outline filter-btn" onclick="filterTasks('reporting')" style="font-size:0.78rem;padding:6px 14px;color:#f472b6;">Reporting</button>
+    <div class="filter-bar">
+      <button class="filter-btn active" data-cat="all" onclick="filterTasks('all')">All</button>
+      <button class="filter-btn" data-cat="ops" onclick="filterTasks('ops')">Fab Ops</button>
+      <button class="filter-btn" data-cat="equip" onclick="filterTasks('equip')">Equipment</button>
+      <button class="filter-btn" data-cat="quality" onclick="filterTasks('quality')">Quality</button>
+      <button class="filter-btn" data-cat="supply" onclick="filterTasks('supply')">Supply Chain</button>
+      <button class="filter-btn" data-cat="planning" onclick="filterTasks('planning')">Planning</button>
+      <button class="filter-btn" data-cat="mes" onclick="filterTasks('mes')">MES/IT</button>
+      <button class="filter-btn" data-cat="reporting" onclick="filterTasks('reporting')">Reporting</button>
     </div>
 
-    <div class="cards-grid" id="tasks-grid"></div>
+    <div class="cards-grid" id="tasks-container"></div>
   </div>
 
   <!-- TAB: SCENARIOS -->
-  <div class="tab-content" id="tab-scenarios">
-    <h2 style="color:var(--text-heading);margin-bottom:8px;">&#127914; Practice Scenarios</h2>
-    <p style="color:var(--text-muted);margin-bottom:24px;font-size:0.9rem;">Work through real-world BA scenarios. Write your approach and save your answers — they're stored locally in your browser.</p>
-    <div id="scenarios-list"></div>
+  <div class="tab-content" id="scenarios">
+    <h2 style="color:var(--text-heading);margin-bottom:8px;">🎭 Practice Scenarios</h2>
+    <p style="color:var(--text-muted);margin-bottom:20px;font-size:0.88rem;">Work through real-world BA scenarios. Expand the hints when stuck. Save your analysis — it persists locally.</p>
+    <div id="scenarios-container"></div>
   </div>
 
   <!-- TAB: CHECKLIST -->
-  <div class="tab-content" id="tab-checklist">
-    <h2 style="color:var(--text-heading);margin-bottom:8px;">&#9989; Domain Knowledge Checklist</h2>
-    <p style="color:var(--text-muted);margin-bottom:20px;font-size:0.9rem;">Track your semiconductor manufacturing knowledge. Check off topics as you learn them.</p>
-    <div class="progress-container">
-      <div class="progress-label">
-        <span style="color:var(--text-muted);font-size:0.85rem;">Progress</span>
-        <span style="color:var(--green);font-size:0.85rem;font-weight:600;" id="check-progress-text">0 / 13 completed</span>
-      </div>
-      <div class="progress-bar"><div class="progress-fill" id="check-progress-fill" style="width:0%;"></div></div>
-    </div>
-    <div id="checklist-list"></div>
+  <div class="tab-content" id="checklist">
+    <h2 style="color:var(--text-heading);margin-bottom:8px;">✅ Domain Knowledge Checklist</h2>
+    <p style="color:var(--text-muted);margin-bottom:16px;font-size:0.88rem;">Track your semiconductor manufacturing knowledge. Tap to check off topics as you learn them.</p>
+    <div id="checklist-container"></div>
   </div>
 
   <!-- TAB: KPIs -->
-  <div class="tab-content" id="tab-kpis">
-    <h2 style="color:var(--text-heading);margin-bottom:8px;">&#128200; Key Performance Indicators</h2>
-    <p style="color:var(--text-muted);margin-bottom:20px;font-size:0.9rem;">Standard KPIs used in semiconductor memory manufacturing. Know these cold for stakeholder conversations.</p>
-    <table class="kpi-table">
-      <thead>
-        <tr>
-          <th>KPI</th>
-          <th>Description</th>
-          <th>Typical Target</th>
-        </tr>
-      </thead>
-      <tbody id="kpi-tbody"></tbody>
-    </table>
+  <div class="tab-content" id="kpis">
+    <h2 style="color:var(--text-heading);margin-bottom:8px;">📊 Key Performance Indicators</h2>
+    <p style="color:var(--text-muted);margin-bottom:16px;font-size:0.88rem;">Standard KPIs used in semiconductor memory manufacturing. Know these cold for stakeholder conversations.</p>
+    <div id="kpis-container"></div>
   </div>
 
   <!-- TAB: ROUTINES -->
-  <div class="tab-content" id="tab-routines">
-    <h2 style="color:var(--text-heading);margin-bottom:8px;">&#128197; Daily & Weekly Routines</h2>
-    <p style="color:var(--text-muted);margin-bottom:24px;font-size:0.9rem;">A typical BA schedule in a semiconductor fab environment.</p>
-
-    <h3 style="color:var(--accent);margin-bottom:12px;">Daily Schedule</h3>
-    <table class="routine-table" style="margin-bottom:28px;">
-      <thead><tr><th>Time</th><th>Activity</th></tr></thead>
-      <tbody>
-        <tr><td style="color:var(--accent);font-weight:600;">8:00 AM</td><td>Review overnight fab metrics (yield, WIP, equipment downs)</td></tr>
-        <tr><td style="color:var(--accent);font-weight:600;">9:00 AM</td><td>Daily standup with development team (Agile/Scrum)</td></tr>
-        <tr><td style="color:var(--accent);font-weight:600;">10:00 AM</td><td>Stakeholder meetings / requirements workshops</td></tr>
-        <tr><td style="color:var(--accent);font-weight:600;">11:00 AM</td><td>Write/update user stories, acceptance criteria, BRDs</td></tr>
-        <tr><td style="color:var(--accent);font-weight:600;">1:00 PM</td><td>Data validation and dashboard QA</td></tr>
-        <tr><td style="color:var(--accent);font-weight:600;">2:00 PM</td><td>Cross-functional alignment meetings (process, equipment, quality)</td></tr>
-        <tr><td style="color:var(--accent);font-weight:600;">3:00 PM</td><td>Document process flows, data mappings, specs</td></tr>
-        <tr><td style="color:var(--accent);font-weight:600;">4:00 PM</td><td>Follow-up on action items, update JIRA/ADO backlog</td></tr>
-      </tbody>
-    </table>
-
-    <h3 style="color:var(--accent);margin-bottom:12px;">Weekly Schedule</h3>
-    <table class="routine-table" style="margin-bottom:28px;">
-      <thead><tr><th>Day</th><th>Focus</th></tr></thead>
-      <tbody>
-        <tr><td style="color:var(--green);font-weight:600;">Monday</td><td>Sprint planning / backlog grooming</td></tr>
-        <tr><td style="color:var(--green);font-weight:600;">Tuesday</td><td>Stakeholder requirement deep-dives</td></tr>
-        <tr><td style="color:var(--green);font-weight:600;">Wednesday</td><td>Mid-sprint review, data model reviews with IT</td></tr>
-        <tr><td style="color:var(--green);font-weight:600;">Thursday</td><td>UAT coordination, defect triage</td></tr>
-        <tr><td style="color:var(--green);font-weight:600;">Friday</td><td>Sprint demo, retrospective, weekly status report</td></tr>
-      </tbody>
-    </table>
-
-    <h3 style="color:var(--accent);margin-bottom:12px;">Monthly Cadence</h3>
-    <div class="cards-grid" style="grid-template-columns:repeat(auto-fill,minmax(240px,1fr));">
-      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;">
-        <div style="font-size:1.5rem;margin-bottom:8px;">&#128202;</div>
-        <h4 style="color:var(--text-heading);margin-bottom:4px;">Business Review Prep</h4>
-        <p style="color:var(--text-muted);font-size:0.85rem;">Prepare monthly KPI slide decks with commentary for management review</p>
-      </div>
-      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;">
-        <div style="font-size:1.5rem;margin-bottom:8px;">&#128269;</div>
-        <h4 style="color:var(--text-heading);margin-bottom:4px;">KPI Trend Analysis</h4>
-        <p style="color:var(--text-muted);font-size:0.85rem;">Identify trends, anomalies, and improvement opportunities across key metrics</p>
-      </div>
-      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;">
-        <div style="font-size:1.5rem;margin-bottom:8px;">&#128137;</div>
-        <h4 style="color:var(--text-heading);margin-bottom:4px;">Report Usage Audit</h4>
-        <p style="color:var(--text-muted);font-size:0.85rem;">Review who is using which reports and retire unused content</p>
-      </div>
-      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;">
-        <div style="font-size:1.5rem;margin-bottom:8px;">&#9989;</div>
-        <h4 style="color:var(--text-heading);margin-bottom:4px;">Data Quality Audit</h4>
-        <p style="color:var(--text-muted);font-size:0.85rem;">Run data quality checks and track remediation of known issues</p>
-      </div>
-    </div>
+  <div class="tab-content" id="routines">
+    <h2 style="color:var(--text-heading);margin-bottom:8px;">📅 Daily Routines</h2>
+    <p style="color:var(--text-muted);margin-bottom:16px;font-size:0.88rem;">A typical BA schedule in a semiconductor fab environment.</p>
+    <div id="routines-container"></div>
   </div>
 
   <!-- TAB: TOOLS -->
-  <div class="tab-content" id="tab-tools">
-    <h2 style="color:var(--text-heading);margin-bottom:8px;">&#128295; Tools & Systems</h2>
-    <p style="color:var(--text-muted);margin-bottom:24px;font-size:0.9rem;">Systems you would interact with as a BA in semiconductor memory manufacturing.</p>
-    <div class="cards-grid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr));">
-      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;">
-        <div style="color:var(--accent);font-weight:700;font-size:0.8rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">MES</div>
-        <h4 style="margin-bottom:6px;">CMF / Camstar / Promis</h4>
-        <p style="color:var(--text-muted);font-size:0.85rem;">Fab execution, lot tracking, recipe management, equipment states, WIP</p>
-        <div style="margin-top:10px;padding:6px 10px;background:var(--green-bg);border-radius:6px;color:var(--green);font-size:0.75rem;">Your Experience: CMF at Micron</div>
-      </div>
-      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;">
-        <div style="color:var(--purple);font-weight:700;font-size:0.8rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">PLM</div>
-        <h4 style="margin-bottom:6px;">Teamcenter / Windchill</h4>
-        <p style="color:var(--text-muted);font-size:0.85rem;">Product data management, BOMs, engineering changes (CR/CN), part revisions</p>
-        <div style="margin-top:10px;padding:6px 10px;background:var(--green-bg);border-radius:6px;color:var(--green);font-size:0.75rem;">Your Experience: Teamcenter at Micron</div>
-      </div>
-      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;">
-        <div style="color:var(--yellow);font-weight:700;font-size:0.8rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">ERP</div>
-        <h4 style="margin-bottom:6px;">SAP / Oracle</h4>
-        <p style="color:var(--text-muted);font-size:0.85rem;">Finance, procurement, inventory, purchase orders, vendor management</p>
-      </div>
-      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;">
-        <div style="color:var(--yellow);font-weight:700;font-size:0.8rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">SPC</div>
-        <h4 style="margin-bottom:6px;">InfinityQS / SPACE</h4>
-        <p style="color:var(--text-muted);font-size:0.85rem;">Statistical process control charting, Cp/Cpk, out-of-control alerts, OCAP</p>
-      </div>
-      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;">
-        <div style="color:var(--red);font-weight:700;font-size:0.8rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Yield Mgmt</div>
-        <h4 style="margin-bottom:6px;">Yield Explorer / Examinator</h4>
-        <p style="color:var(--text-muted);font-size:0.85rem;">Wafer maps, yield analysis, defect clustering, bin analysis</p>
-      </div>
-      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;">
-        <div style="color:var(--accent);font-weight:700;font-size:0.8rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">BI & Reporting</div>
-        <h4 style="margin-bottom:6px;">Power BI / Tableau / Grafana / SSRS</h4>
-        <p style="color:var(--text-muted);font-size:0.85rem;">Dashboards, reports, KPI tracking, stakeholder-facing analytics</p>
-        <div style="margin-top:10px;padding:6px 10px;background:var(--green-bg);border-radius:6px;color:var(--green);font-size:0.75rem;">Your Experience: All four tools</div>
-      </div>
-      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;">
-        <div style="color:var(--accent);font-weight:700;font-size:0.8rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Data Platform</div>
-        <h4 style="margin-bottom:6px;">Snowflake / ClickHouse / SQL Server</h4>
-        <p style="color:var(--text-muted);font-size:0.85rem;">Cloud and on-prem data warehousing, analytics query engines</p>
-        <div style="margin-top:10px;padding:6px 10px;background:var(--green-bg);border-radius:6px;color:var(--green);font-size:0.75rem;">Your Experience: All three platforms</div>
-      </div>
-      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;">
-        <div style="color:var(--purple);font-weight:700;font-size:0.8rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Project Mgmt</div>
-        <h4 style="margin-bottom:6px;">JIRA / Azure DevOps</h4>
-        <p style="color:var(--text-muted);font-size:0.85rem;">Agile backlog management, sprint tracking, defect management</p>
-      </div>
-    </div>
+  <div class="tab-content" id="tools">
+    <h2 style="color:var(--text-heading);margin-bottom:8px;">🔧 Tools & Systems</h2>
+    <p style="color:var(--text-muted);margin-bottom:16px;font-size:0.88rem;">Systems you'll interact with as a BA in semiconductor memory manufacturing.</p>
+    <div id="tools-container"></div>
   </div>
 
 </main>
 
 <!-- TASK DETAIL MODAL -->
-<div class="modal-overlay" id="task-modal">
+<div class="modal-overlay" id="modal-overlay">
   <div class="modal">
-    <button class="modal-close" onclick="closeModal()">&#10005;</button>
-    <div class="modal-body"></div>
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div id="modal-content"></div>
   </div>
 </div>
 
